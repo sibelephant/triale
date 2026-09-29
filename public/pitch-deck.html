@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Triale — Pitch Deck</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    /* ─── Reset ─────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; overflow: hidden; }
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: #0a0a0f;
+      color: #e8e4dc;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ─── Slide container ──────────────────────────────── */
+    .deck {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+    }
+    .slide {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 6vh 8vw;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .55s cubic-bezier(.4,0,.2,1), transform .55s cubic-bezier(.4,0,.2,1);
+      transform: translateY(18px);
+    }
+    .slide.active {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
+
+    /* ─── Typography ───────────────────────────────────── */
+    .eyebrow {
+      font-size: .75rem;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: #a09888;
+      margin-bottom: 1rem;
+      display: block;
+    }
+    h1 { font-size: clamp(2.2rem, 5vw, 4.2rem); font-weight: 800; line-height: 1.1; max-width: 18ch; }
+    h2 { font-size: clamp(1.6rem, 3.5vw, 2.8rem); font-weight: 700; line-height: 1.15; max-width: 22ch; }
+    h3 { font-size: 1.15rem; font-weight: 600; margin-bottom: .35rem; }
+    p  { font-size: 1.05rem; line-height: 1.6; color: #b8b0a4; max-width: 52ch; }
+    p + p { margin-top: .75rem; }
+
+    /* ─── Accent colours ───────────────────────────────── */
+    .accent   { color: #c6a96c; }
+    .accent-bg { background: linear-gradient(135deg, #c6a96c 0%, #e8d5a8 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+    /* ─── Shared card grid ─────────────────────────────── */
+    .card-grid {
+      display: grid;
+      gap: 1.5rem;
+      margin-top: 2rem;
+    }
+    .card-grid.cols-2 { grid-template-columns: 1fr 1fr; }
+    .card-grid.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+    .card-grid.cols-4 { grid-template-columns: repeat(4, 1fr); }
+    .card {
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.06);
+      border-radius: 14px;
+      padding: 1.8rem;
+      transition: border-color .3s;
+    }
+    .card:hover { border-color: rgba(198,169,108,.35); }
+    .card h3 { color: #e8e4dc; }
+    .card p  { font-size: .92rem; }
+
+    /* ─── Stat cards ───────────────────────────────────── */
+    .stat { text-align: center; padding: 2.5rem 1.5rem; }
+    .stat strong {
+      display: block;
+      font-size: 2.8rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #c6a96c, #e8d5a8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: .35rem;
+    }
+    .stat span { font-size: .85rem; color: #a09888; text-transform: uppercase; letter-spacing: .08em; }
+
+    /* ─── Project cards ────────────────────────────────── */
+    .project-card-deck {
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.06);
+      border-radius: 14px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    .project-card-deck img {
+      width: 100%;
+      height: 160px;
+      object-fit: cover;
+      filter: brightness(.85) saturate(.9);
+    }
+    .project-card-deck .body { padding: 1.3rem 1.5rem; }
+    .project-card-deck .badge {
+      display: inline-block;
+      font-size: .7rem;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: #c6a96c;
+      border: 1px solid rgba(198,169,108,.3);
+      padding: .15rem .6rem;
+      border-radius: 999px;
+      margin-bottom: .6rem;
+    }
+    .project-card-deck .outcome { color: #c6a96c; font-weight: 600; font-size: .9rem; margin-top: .6rem; }
+
+    /* ─── Two-column split ─────────────────────────────── */
+    .split { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; }
+    .split .right { display: flex; flex-direction: column; gap: 1rem; }
+
+    /* ─── Bullet list ──────────────────────────────────── */
+    .check-list { list-style: none; margin-top: 1.5rem; }
+    .check-list li {
+      padding: .55rem 0;
+      border-bottom: 1px solid rgba(255,255,255,.06);
+      font-size: .95rem;
+      display: flex;
+      gap: .6rem;
+      align-items: flex-start;
+    }
+    .check-list li::before {
+      content: '✓';
+      color: #c6a96c;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    /* ─── Engagement model list ────────────────────────── */
+    .model-row {
+      display: flex;
+      gap: 1.5rem;
+      padding: 1rem 0;
+      border-bottom: 1px solid rgba(255,255,255,.06);
+    }
+    .model-row .number { font-size: .8rem; color: #c6a96c; font-weight: 700; flex-shrink: 0; width: 2rem; margin-top: .15rem; }
+    .model-row h3 { font-size: 1.05rem; }
+
+    /* ─── FAQ compact ──────────────────────────────────── */
+    .faq-row {
+      padding: .7rem 0;
+      border-bottom: 1px solid rgba(255,255,255,.06);
+    }
+    .faq-row strong { display: block; font-size: .95rem; color: #e8e4dc; }
+    .faq-row span  { font-size: .85rem; color: #a09888; }
+
+    /* ─── CTA slide ────────────────────────────────────── */
+    .cta-slide { align-items: center; text-align: center; }
+    .cta-slide h1, .cta-slide h2, .cta-slide p { max-width: 32ch; margin-inline: auto; }
+    .cta-link {
+      display: inline-block;
+      margin-top: 1.5rem;
+      padding: .85rem 2.2rem;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #c6a96c, #b89350);
+      color: #0a0a0f;
+      font-weight: 600;
+      font-size: .95rem;
+      text-decoration: none;
+      transition: transform .2s, box-shadow .2s;
+    }
+    .cta-link:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(198,169,108,.35); }
+
+    /* ─── Progress bar ─────────────────────────────────── */
+    .progress {
+      position: fixed;
+      bottom: 0; left: 0;
+      height: 3px;
+      background: linear-gradient(90deg, #c6a96c, #e8d5a8);
+      transition: width .4s ease;
+      z-index: 100;
+    }
+
+    /* ─── Slide counter ────────────────────────────────── */
+    .counter {
+      position: fixed;
+      bottom: 1.4rem;
+      right: 2rem;
+      font-size: .75rem;
+      color: #555;
+      letter-spacing: .06em;
+      z-index: 100;
+    }
+
+    /* ─── Nav hint ─────────────────────────────────────── */
+    .nav-hint {
+      position: fixed;
+      bottom: 1.4rem;
+      left: 2rem;
+      font-size: .7rem;
+      color: #444;
+      letter-spacing: .04em;
+      z-index: 100;
+    }
+
+    /* ─── Brand mark ───────────────────────────────────── */
+    .brand-fixed {
+      position: fixed;
+      top: 1.6rem;
+      left: 2rem;
+      display: flex;
+      align-items: center;
+      gap: .6rem;
+      z-index: 100;
+    }
+    .brand-mark {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 2rem; height: 2rem;
+      border-radius: 6px;
+      background: linear-gradient(135deg, #c6a96c, #b89350);
+      color: #0a0a0f;
+      font-weight: 800;
+      font-size: .75rem;
+    }
+    .brand-name { font-weight: 600; font-size: .95rem; color: #e8e4dc; }
+
+    /* ─── Responsive ───────────────────────────────────── */
+    @media (max-width: 900px) {
+      .card-grid.cols-3, .card-grid.cols-4 { grid-template-columns: 1fr 1fr; }
+      .split { grid-template-columns: 1fr; gap: 2rem; }
+    }
+    @media (max-width: 600px) {
+      .card-grid.cols-2, .card-grid.cols-3, .card-grid.cols-4 { grid-template-columns: 1fr; }
+      .slide { padding: 4vh 6vw; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="brand-fixed">
+  <span class="brand-mark">TR</span>
+  <span class="brand-name">Triale</span>
+</div>
+
+<div class="deck" id="deck">
+
+  <!-- ═══════ Slide 01 — Title ═══════ -->
+  <section class="slide active cta-slide" data-slide="0">
+    <span class="eyebrow">Independent product studio · Lagos, Nigeria</span>
+    <h1>Make useful things <span class="accent-bg">visible.</span></h1>
+    <p>End-to-end software building from a small, senior, and accountable team — on-budget delivery, flexible engagements, and engineering that leaves your team stronger.</p>
+    <a href="mailto:hello@triale.studio" class="cta-link">hello@triale.studio →</a>
+  </section>
+
+  <!-- ═══════ Slide 02 — Problem ═══════ -->
+  <section class="slide" data-slide="1">
+    <span class="eyebrow">The problem</span>
+    <h2>Software projects fail for <span class="accent">predictable</span> reasons.</h2>
+    <ul class="check-list" style="max-width:48ch;">
+      <li>Teams too big to stay aligned, too junior to move fast</li>
+      <li>Scope that drifts because nobody owns the architecture</li>
+      <li>Handoffs that fracture context between strategy, design, and code</li>
+      <li>Vendors that invoice first, ask questions never</li>
+    </ul>
+  </section>
+
+  <!-- ═══════ Slide 03 — Solution ═══════ -->
+  <section class="slide" data-slide="2">
+    <span class="eyebrow">Our approach</span>
+    <h2>One small team. <span class="accent">Strategy, interface, and engineering</span> in the same room.</h2>
+    <p>We stay close to the work from first sketch to production release. Visible progress, no blind spots, and a team that clears roadblocks instead of reporting them.</p>
+    <ul class="check-list" style="max-width:52ch; margin-top:1.5rem;">
+      <li>Senior only — no bench, no hand-off to a team you never met</li>
+      <li>Kickoff in two weeks, or we tell you why we're not the right fit</li>
+      <li>You own the code, repos, and decisions from day one</li>
+      <li>Fixed scope, visible progress, nothing invoiced you didn't approve</li>
+    </ul>
+  </section>
+
+  <!-- ═══════ Slide 04 — Services ═══════ -->
+  <section class="slide" data-slide="3">
+    <span class="eyebrow">Services</span>
+    <h2>The right amount of structure.</h2>
+    <div class="card-grid cols-3">
+      <div class="card">
+        <span class="eyebrow" style="margin-bottom:.6rem">01</span>
+        <h3>Product Strategy</h3>
+        <p>For teams shaping a new offer. Starting point: opportunity map.</p>
+      </div>
+      <div class="card">
+        <span class="eyebrow" style="margin-bottom:.6rem">02</span>
+        <h3>Brand + Interface</h3>
+        <p>For products that need a sharper signal. Starting point: direction sprint.</p>
+      </div>
+      <div class="card">
+        <span class="eyebrow" style="margin-bottom:.6rem">03</span>
+        <h3>Full-stack Delivery</h3>
+        <p>For teams ready to ship. Starting point: working beta.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════ Slide 05 — Engagement Models ═══════ -->
+  <section class="slide" data-slide="4">
+    <span class="eyebrow">Engagement models</span>
+    <h2>Start your project, your way.</h2>
+    <div style="margin-top:1.5rem; max-width:52ch;">
+      <div class="model-row">
+        <span class="number">01</span>
+        <div><h3>Discovery Workshop</h3><p>Cut through the brief in a few focused days — leave with a direction you can staff and fund.</p></div>
+      </div>
+      <div class="model-row">
+        <span class="number">02</span>
+        <div><h3>Project Outsourcing</h3><p>A full team, a clear scope. Architecture through deployment with a single accountable lead.</p></div>
+      </div>
+      <div class="model-row">
+        <span class="number">03</span>
+        <div><h3>Team Extension</h3><p>Add rare or slow-to-hire skills that fold into your delivery rituals.</p></div>
+      </div>
+      <div class="model-row">
+        <span class="number">04</span>
+        <div><h3>Dedicated Team</h3><p>Engineers who embed as a long-term extension of your organisation.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════ Slide 06 — Proof / Numbers ═══════ -->
+  <section class="slide" data-slide="5">
+    <span class="eyebrow">By the numbers</span>
+    <h2>Track record that speaks.</h2>
+    <div class="card-grid cols-4" style="margin-top:2.5rem;">
+      <div class="card stat">
+        <strong>40+</strong>
+        <span>Products shipped</span>
+      </div>
+      <div class="card stat">
+        <strong>14 days</strong>
+        <span>Median kickoff</span>
+      </div>
+      <div class="card stat">
+        <strong>36 mo</strong>
+        <span>Avg. engagement</span>
+      </div>
+      <div class="card stat">
+        <strong>100%</strong>
+        <span>Code owned by you</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════ Slide 07 — Selected Work ═══════ -->
+  <section class="slide" data-slide="6">
+    <span class="eyebrow">Selected work · 2024 — 26</span>
+    <h2>A few things we're proud of.</h2>
+    <div class="card-grid cols-3" style="margin-top:1.5rem;">
+      <div class="project-card-deck">
+        <img src="https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=600&q=80" alt="Northstar Field Guide" />
+        <div class="body">
+          <span class="badge">Climate operations</span>
+          <h3>Northstar Field Guide</h3>
+          <p>Turning fragmented climate operations into clear, useful action.</p>
+          <div class="outcome">42% faster reporting</div>
+        </div>
+      </div>
+      <div class="project-card-deck">
+        <img src="https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&w=600&q=80" alt="Common Thread" />
+        <div class="body">
+          <span class="badge">Credit union onboarding</span>
+          <h3>Common Thread</h3>
+          <p>Replacing institutional friction with useful moments of trust.</p>
+          <div class="outcome">3.1× completion rate</div>
+        </div>
+      </div>
+      <div class="project-card-deck">
+        <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=600&q=80" alt="Lumen House" />
+        <div class="body">
+          <span class="badge">Boutique hotel group</span>
+          <h3>Lumen House</h3>
+          <p>Making a new kind of stay tangible before opening day.</p>
+          <div class="outcome">Beta in 18 days</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════ Slide 08 — Principles ═══════ -->
+  <section class="slide" data-slide="7">
+    <span class="eyebrow">Working principles</span>
+    <h2>A few things we believe.</h2>
+    <div class="card-grid cols-3" style="margin-top:2rem;">
+      <div class="card">
+        <span class="eyebrow" style="margin-bottom:.5rem; color:#c6a96c;">Strategy</span>
+        <h3>Make the invisible visible</h3>
+        <p>Turn complexity into a shared map.</p>
+      </div>
+      <div class="card">
+        <span class="eyebrow" style="margin-bottom:.5rem; color:#c6a96c;">Delivery</span>
+        <h3>Ship the useful version</h3>
+        <p>Learn with real people early.</p>
+      </div>
+      <div class="card">
+        <span class="eyebrow" style="margin-bottom:.5rem; color:#c6a96c;">Engineering</span>
+        <h3>Leave a better system</h3>
+        <p>Build foundations teams can extend.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════ Slide 09 — Tech & FAQ ═══════ -->
+  <section class="slide" data-slide="8">
+    <div class="split">
+      <div>
+        <span class="eyebrow">Tech stack</span>
+        <h2>Modern, boring where it matters.</h2>
+        <p style="margin-top:.8rem;">TypeScript & React on the front. Node, Python, and Go behind it. AWS, Azure, and Google Cloud. We also modernise older systems when that's the real job.</p>
+        <p>AI work — narrowly: retrieval, evaluation, cost control, and the unglamorous parts in between.</p>
+      </div>
+      <div class="right">
+        <span class="eyebrow">Common questions</span>
+        <div class="faq-row">
+          <strong>How quickly can you start?</strong>
+          <span>Two weeks from first call.</span>
+        </div>
+        <div class="faq-row">
+          <strong>How long to build?</strong>
+          <span>Usable release in 3 – 6 months.</span>
+        </div>
+        <div class="faq-row">
+          <strong>Who owns the IP?</strong>
+          <span>You do. Entirely. From the first commit.</span>
+        </div>
+        <div class="faq-row">
+          <strong>Can we scale up or down?</strong>
+          <span>Yes, in either direction within days.</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════ Slide 10 — CTA / Close ═══════ -->
+  <section class="slide cta-slide" data-slide="9">
+    <span class="eyebrow">Next step</span>
+    <h2>You already have enough to stress about. <span class="accent-bg">Your software shouldn't be part of it.</span></h2>
+    <p>Bring us the knotty version. We're most useful when the brief is still becoming clear.</p>
+    <a href="mailto:hello@triale.studio" class="cta-link">Start a conversation →</a>
+  </section>
+
+</div>
+
+<div class="progress" id="progress"></div>
+<div class="counter" id="counter"></div>
+<div class="nav-hint">← → or click to navigate</div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const total = slides.length;
+  let current = 0;
+
+  function go(index) {
+    if (index < 0 || index >= total) return;
+    slides[current].classList.remove('active');
+    current = index;
+    slides[current].classList.add('active');
+    document.getElementById('progress').style.width = ((current + 1) / total * 100) + '%';
+    document.getElementById('counter').textContent = String(current + 1).padStart(2, '0') + ' / ' + String(total).padStart(2, '0');
+  }
+
+  go(0);
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); go(current + 1); }
+    if (e.key === 'ArrowLeft')  { e.preventDefault(); go(current - 1); }
+    if (e.key === 'Home')       { e.preventDefault(); go(0); }
+    if (e.key === 'End')        { e.preventDefault(); go(total - 1); }
+  });
+
+  document.getElementById('deck').addEventListener('click', (e) => {
+    if (e.target.closest('a')) return;
+    const x = e.clientX / window.innerWidth;
+    x > 0.5 ? go(current + 1) : go(current - 1);
+  });
+
+  /* Touch swipe */
+  let touchX = 0;
+  document.addEventListener('touchstart', (e) => { touchX = e.touches[0].clientX; });
+  document.addEventListener('touchend', (e) => {
+    const dx = e.changedTouches[0].clientX - touchX;
+    if (Math.abs(dx) > 50) dx < 0 ? go(current + 1) : go(current - 1);
+  });
+</script>
+</body>
+</html>

@@ -40,6 +40,7 @@ export const footerColumns: { heading: string; links: FooterLink[] }[] = [
       { label: 'How we work', to: '/about#principles' },
       { label: 'Selected work', to: '/work' },
       { label: 'Contact', to: '/contact' },
+      { label: 'Pitch deck', href: '/pitch-deck.html' },
     ],
   },
   {
